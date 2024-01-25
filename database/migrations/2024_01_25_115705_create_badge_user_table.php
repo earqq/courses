@@ -11,9 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('user_achievement', function (Blueprint $table) {
+        Schema::create('badge_user', function (Blueprint $table) {
+            $table->id();
             $table->foreignIdFor(\App\Models\User::class);
-            $table->foreignIdFor(\App\Models\Achievement::class);
+            $table->foreignIdFor(\App\Models\Badge::class);
             $table->timestamps();
         });
     }
@@ -23,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('user_achievement');
+        Schema::dropIfExists('badge_user');
     }
 };

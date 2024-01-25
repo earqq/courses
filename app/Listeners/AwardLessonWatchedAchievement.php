@@ -23,7 +23,16 @@ class AwardLessonWatchedAchievement
      */
     public function handle(LessonWatched $event): void
     {
-        dd($event->user);        
+        $user = $event->user;
+        $lessonsWatched = $user->watched()->count();
+
+        $currentAchievement = Achievement::where('type', AchievementType::LESSON)
+            ->where('goal',  $lessonsWatched)
+            ->first();
+        if(isset($currentAchievement)){
+            $user->achievements()->sync([$currentAchievement->id => ['created_at' => now(), 'updated_at' => now()]]);
+        }
+        
         
     }
 }

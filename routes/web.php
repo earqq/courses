@@ -22,6 +22,8 @@ Route::get('/users/{user}/achievements', [AchievementsController::class, 'index'
 
 Route::get('try-achievements', function () {
     $user = App\Models\User::first();
+    $lesson = App\Models\Lesson::find(1);
+    $user->watched()->attach($lesson,['watched' => true]);
     event(new App\Events\LessonWatched(
         App\Models\Lesson::find(1),
         $user
