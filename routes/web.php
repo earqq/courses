@@ -19,3 +19,12 @@ Route::get('/', function () {
 });
 
 Route::get('/users/{user}/achievements', [AchievementsController::class, 'index']);
+
+Route::get('try-achievements', function () {
+    $user = App\Models\User::first();
+    event(new App\Events\LessonWatched(
+        App\Models\Lesson::find(1),
+        $user
+    ));
+
+});
