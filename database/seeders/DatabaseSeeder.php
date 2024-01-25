@@ -6,7 +6,8 @@ use App\Models\Lesson;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-
+use Database\Seeders\AchievementSeeder;
+use Database\Seeders\BadgeSeeder;
 class DatabaseSeeder extends Seeder
 {
     /**
@@ -14,11 +15,15 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        $lessons = Lesson::factory()
+       Lesson::factory()
             ->count(20)
             ->create();
 
-        $user = User::factory()->create();
+        User::factory()->create();
         
+        $this->call([
+            AchievementSeeder::class,
+            BadgeSeeder::class,
+        ]);
     }
 }

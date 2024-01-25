@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('achievements', function (Blueprint $table) {
             $table->id();
-            $table->foreignIdFor(\App\Models\User::class);
-            $table->tinyInteger('level');
+            $table->string('name')->unique();
+            $table->integer('goal');
             $table->tinyInteger('type');
             $table->timestamps();
         });
