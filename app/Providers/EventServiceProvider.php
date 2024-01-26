@@ -24,6 +24,9 @@ class EventServiceProvider extends ServiceProvider
         'App\Events\CommentWritten' => [
             'App\Listeners\AwardCommentWrittenAchievement',
         ],
+        'App\Events\AchievementEarned' => [
+            'App\Listeners\AssignBadge',
+        ],
     ];
 
     /**
