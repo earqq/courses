@@ -20,14 +20,20 @@ class AchievementsController extends Controller
         $userCurrentBadge = $user->badges()->orderBy('badge_user.created_at', 'desc')->first();
         $nextUserBadge = Badge::where('goal', '>', $userCurrentBadge->goal)->first();
 
+        $allAchievements = Achievement::select('name')->orderBy('type', 'asc')->orderBy('goal', 'asc')->pluck('name');
+
+        // Check if nextUserBadge exists
+        $nextBadgeName = $nextUserBadge ? $nextUserBadge->name : 'No more badges';
+        $nextBadgeGoal = $nextUserBadge ? $nextUserBadge->goal : 0;
+
         if($userAllAchievements->isEmpty()){
             $allAchievements = Achievement::select('name')->orderBy('type', 'asc')->orderBy('goal', 'asc')->pluck('name');
             return response()->json([
                 'unlocked_achievements' => [],
                 'next_available_achievements' => $allAchievements,
                 'current_badge' => $userCurrentBadge->name,
-                'next_badge' => $nextUserBadge->name,
-                'remaining_to_unlock_next_badge' => $nextUserBadge->goal
+                'next_badge' => $nextBadgeName,
+                'remaining_to_unlock_next_badge' => $nextBadgeGoal
             ]);
         }
 
@@ -37,20 +43,27 @@ class AchievementsController extends Controller
         ->where('type', AchievementType::LESSON)
         ->pluck('id');
 
-        $nextLessonAchievementToUnlock = Achievement::where('type', AchievementType::LESSON)
+        $nextLessonAchievementToUnlockName = Achievement::where('type', AchievementType::LESSON)
         ->whereNotIn('id', $userLessonAchievementsUnlockedIds)
         ->orderBy('goal', 'asc')
-        ->first();
+        ->value('name');
 
         $userCommentAchievementsUnlockedIds = $user->achievements()
         ->where('type', AchievementType::COMMENT)
         ->pluck('id');
 
-        $nextCommentAchievementToUnlock = Achievement::where('type', AchievementType::COMMENT)
+        $nextCommentAchievementToUnlockName = Achievement::where('type', AchievementType::COMMENT)
         ->whereNotIn('id', $userCommentAchievementsUnlockedIds)
         ->orderBy('goal', 'asc')
-        ->first();
+        ->value('name');
 
+        $nextAchievements = [];
+        if(isset($nextLessonAchievementToUnlockName)){
+            array_push($nextAchievements, $nextLessonAchievementToUnlockName);
+        }
+        if(isset($nextCommentAchievementToUnlockName)){
+            array_push($nextAchievements, $nextCommentAchievementToUnlockName);
+        }
 
         $countUserAchievements = $user->achievements()->count();
         $remainingToUnlockNextBadge = $nextUserBadge->goal - $countUserAchievements;
@@ -58,10 +71,10 @@ class AchievementsController extends Controller
 
         return response()->json([
             'unlocked_achievements' => $unlockedAchievementNames,
-            'next_available_achievements' => [$nextLessonAchievementToUnlock->name , $nextCommentAchievementToUnlock->name],
+            'next_available_achievements' => $nextAchievements,
             'current_badge' => $userCurrentBadge->name,
-            'next_badge' => $nextUserBadge->name,
-            'remaining_to_unlock_next_badge' => $remainingToUnlockNextBadge
+            'next_badge' => $nextBadgeName,
+            'remaining_to_unlock_next_badge' => $nextBadgeGoal
         ]);
     }
 }
