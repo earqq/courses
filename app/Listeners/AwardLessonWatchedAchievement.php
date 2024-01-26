@@ -30,7 +30,11 @@ class AwardLessonWatchedAchievement
             ->where('goal',  $lessonsWatched)
             ->first();
         if(isset($currentAchievement)){
-            $user->achievements()->sync([$currentAchievement->id => ['created_at' => now(), 'updated_at' => now()]]);
+            $hasAchievement = $user->achievements()->where('achievement_id', $currentAchievement->id)->exists();
+
+            if (!$hasAchievement) {
+                $user->achievements()->attach([$currentAchievement->id => ['created_at' => now(), 'updated_at' => now()]]);
+            }
         }
         
         
