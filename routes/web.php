@@ -22,11 +22,20 @@ Route::get('/users/{user}/achievements', [AchievementsController::class, 'index'
 
 Route::get('try-achievements', function () {
     $user = App\Models\User::first();
-    $lesson = App\Models\Lesson::find(1);
-    $user->watched()->attach($lesson,['watched' => true]);
-    event(new App\Events\LessonWatched(
-        App\Models\Lesson::find(1),
-        $user
+    for($i = 1; $i <=17; $i++) {
+        $lesson = App\Models\Lesson::find($i);
+        $user->watched()->attach($lesson,['watched' => true]);
+        event(new App\Events\LessonWatched(
+            $lesson,
+            $user
+        ));
+    }
+    
+    $comment = new App\Models\Comment();
+    $comment->body = 'This is a comment';
+    $comment->user_id = $user->id;
+    $comment->save();
+    event(new App\Events\CommentWritten(
+        $comment,
     ));
-
 });

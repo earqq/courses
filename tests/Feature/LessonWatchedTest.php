@@ -74,7 +74,7 @@ class LessonWatchedTest extends TestCase
     /**
      * Testing if not award duplicate achievements
      */
-    public function test_it_does_not_awar_duplicate_achievements()
+    public function test_it_does_not_award_duplicate_achievements()
     {
         $user = User::factory()->create();
         $lesson = Lesson::factory()->create();

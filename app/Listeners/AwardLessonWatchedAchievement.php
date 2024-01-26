@@ -7,6 +7,7 @@ use App\Events\LessonWatched;
 use App\Models\Achievement;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
+use App\Events\AchievementEarned;
 
 class AwardLessonWatchedAchievement
 {
@@ -34,6 +35,7 @@ class AwardLessonWatchedAchievement
 
             if (!$hasAchievement) {
                 $user->achievements()->attach([$currentAchievement->id => ['created_at' => now(), 'updated_at' => now()]]);
+                event(new AchievementEarned($currentAchievement->name, $user));
             }
         }
         
