@@ -29,8 +29,7 @@ class DatabaseSeeder extends Seeder
 
         $user = User::factory()->create();
 
-        $badge = Badge::where('goal',0)->first();
-        $user->badges()->attach([$badge->id => ['created_at' => now(), 'updated_at' => now()]]);
+       
 
     }
 }

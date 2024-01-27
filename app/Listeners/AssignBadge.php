@@ -24,9 +24,9 @@ class AssignBadge
     {   
         $user = $event->user;
         $achievementsEarned = $user->achievements()->count();
-
         $currentBadge = Badge::where('goal',  $achievementsEarned)
         ->first();
+
         if(isset($currentBadge)){
             $hasBadge = $user->badges()->where('badge_id', $currentBadge->id)->exists();
             if (!$hasBadge) {

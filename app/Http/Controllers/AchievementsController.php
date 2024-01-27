@@ -23,8 +23,10 @@ class AchievementsController extends Controller
         $allAchievements = Achievement::select('name')->orderBy('type', 'asc')->orderBy('goal', 'asc')->pluck('name');
 
         // Check if nextUserBadge exists
+        $countUserAchievements = $user->achievements()->count();
         $nextBadgeName = $nextUserBadge ? $nextUserBadge->name : 'No more badges';
-        $nextBadgeGoal = $nextUserBadge ? $nextUserBadge->goal : 0;
+        $remainingToUnlockNextBadge = $nextUserBadge ? $nextUserBadge->goal - $countUserAchievements : 0;
+        
 
         if($userAllAchievements->isEmpty()){
             $allAchievements = Achievement::select('name')->orderBy('type', 'asc')->orderBy('goal', 'asc')->pluck('name');
@@ -33,7 +35,7 @@ class AchievementsController extends Controller
                 'next_available_achievements' => $allAchievements,
                 'current_badge' => $userCurrentBadge->name,
                 'next_badge' => $nextBadgeName,
-                'remaining_to_unlock_next_badge' => $nextBadgeGoal
+                'remaining_to_unlock_next_badge' => $remainingToUnlockNextBadge
             ]);
         }
 
@@ -65,16 +67,14 @@ class AchievementsController extends Controller
             array_push($nextAchievements, $nextCommentAchievementToUnlockName);
         }
 
-        $countUserAchievements = $user->achievements()->count();
-        $remainingToUnlockNextBadge = $nextUserBadge->goal - $countUserAchievements;
-
+       
 
         return response()->json([
             'unlocked_achievements' => $unlockedAchievementNames,
             'next_available_achievements' => $nextAchievements,
             'current_badge' => $userCurrentBadge->name,
             'next_badge' => $nextBadgeName,
-            'remaining_to_unlock_next_badge' => $nextBadgeGoal
+            'remaining_to_unlock_next_badge' => $remainingToUnlockNextBadge
         ]);
     }
 }
