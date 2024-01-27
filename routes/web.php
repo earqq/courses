@@ -20,7 +20,7 @@ Route::get('/', function () {
 
 Route::get('/users/{user}/achievements', [AchievementsController::class, 'index']);
 
-Route::get('try-achievements', function () {
+Route::get('add-achievements', function () {
     $user = App\Models\User::first();
     for($i = 1; $i <=17; $i++) {
         $lesson = App\Models\Lesson::find($i);
